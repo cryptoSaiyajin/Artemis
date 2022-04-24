@@ -3,18 +3,18 @@
 pragma solidity ^0.8;
 
 contract StakingArt {
-    IERC20 public artToken; //staking token
-    IERC20 public rewardsToken;//reward token
+    IERC20 public artToken;
+    IERC20 public rewardsToken;
 
-    uint public rewardRate = 1;// 1 token minted per second
-    uint public lastUpdateTime;// last updated time when contract was called
-    uint public rewardPerTokenStored;//summation of reward rate divided the total supply of token stake at each time
+    uint public rewardRate = 1;
+    uint public lastUpdateTime;
+    uint public rewardPerTokenStored;
 
-    mapping(address => uint) public userRewardPerTokenPaid;//rewards per token stored and user interacts with smart contract
+    mapping(address => uint) public userRewardPerTokenPaid;
     mapping(address => uint) public rewards;
 
-    uint private _totalSupply;//total tokens staked
-    mapping(address => uint) private _balances;//total token staked per user
+    uint private _totalSupply;
+    mapping(address => uint) private _balances;
 
     constructor(address _stakingToken, address _rewardsToken) {
         artToken = IERC20(_stakingToken);
@@ -49,13 +49,13 @@ contract StakingArt {
     function stake(uint _amount) external updateReward(msg.sender) {
         _totalSupply += _amount;
         _balances[msg.sender] += _amount;
-        stakingToken.transferFrom(msg.sender, address(this), _amount);
+        artToken.transferFrom(msg.sender, address(this), _amount);
     }
 
     function withdraw(uint _amount) external updateReward(msg.sender) {
         _totalSupply -= _amount;
         _balances[msg.sender] -= _amount;
-        stakingToken.transfer(msg.sender, _amount);
+        artToken.transfer(msg.sender, _amount);
     }
 
     function getReward() external updateReward(msg.sender) {
